@@ -49,6 +49,7 @@ class TableContainer<E : Any>(
             }
     }
 
+    // TODO: das hier in ne extra klasse
     private fun setCopyColumnStroke() {
         val copyKeyStroke = KeyStroke.getKeyStroke("ctrl C")
         this.table.inputMap.put(copyKeyStroke, "copyFirstCell")
