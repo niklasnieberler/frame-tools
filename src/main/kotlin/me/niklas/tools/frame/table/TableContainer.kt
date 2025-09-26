@@ -1,10 +1,6 @@
 package me.niklas.tools.frame.table
 
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
-import javax.swing.AbstractAction
 import javax.swing.JTable
-import javax.swing.KeyStroke
 
 /**
  * @author Niklas Nieberler
