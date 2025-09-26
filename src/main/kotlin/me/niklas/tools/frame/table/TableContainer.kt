@@ -5,7 +5,6 @@ import java.awt.datatransfer.StringSelection
 import javax.swing.AbstractAction
 import javax.swing.JTable
 import javax.swing.KeyStroke
-import javax.swing.table.DefaultTableModel
 
 /**
  * @author Niklas Nieberler
