@@ -1,21 +1,27 @@
 package me.niklas.tools.frame.table
 
+import java.awt.event.KeyListener
+import java.awt.event.MouseListener
+import javax.swing.JTable
+import javax.swing.table.TableCellRenderer
+
 /**
  * @author Niklas Nieberler
  */
 
-class TableBuilder {
+class TableBuilder(
+    val table: JTable,
+) {
 
-    internal var _headers: List<String> = emptyList()
-    internal var _rows: List<String> = emptyList()
+    internal var mouseListener: MouseListener? = null
+    internal val keyListener: KeyListener? = null
 
-    fun headers(vararg headers: String) {
-        _headers = headers.toList()
+    fun <R : TableCellRenderer> columnRenderer(
+        renderer: R,
+        fromColumn: Int = 0,
+        toColumn: Int = this.table.columnCount,
+    ) {
+
     }
-
-    fun rows(rows: List<String>) {
-        _rows = rows
-    }
-
 
 }

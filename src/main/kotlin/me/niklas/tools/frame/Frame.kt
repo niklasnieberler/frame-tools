@@ -1,15 +1,13 @@
 package me.niklas.tools.frame
 
-import me.niklas.tools.frame.table.Table
 import me.niklas.tools.frame.table.TableBuilder
 import me.niklas.tools.frame.table.TableConfigurator
+import me.niklas.tools.frame.table.TableContainer
+import me.niklas.tools.frame.utils.DefaultGridBagConstraints
 import java.awt.Dimension
-import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.JFrame
 import javax.swing.JScrollPane
-import javax.swing.JTable
-import javax.swing.table.DefaultTableModel
 
 /**
  * @author Niklas Nieberler
@@ -31,20 +29,15 @@ abstract class Frame(
     }
 
     fun <E : Any> table(id: String, configurator: TableConfigurator<E>, builder: TableBuilder.() -> Unit) {
-        val tableModel = DefaultTableModel()
-        val table = JTable(tableModel)
+        val tableContainer = TableContainer(id, configurator, builder)
+        add(tableContainer.createTable(), DefaultGridBagConstraints())
+    }
 
-        val array = configurator.findRows
-            .map { configurator.buildColumn(it) }
-            .toTypedArray()
-
-        val tableBuilder1 = TableBuilder()
-
-        tableModel.setDataVector(array, configurator.headers.toTypedArray())
-
-        val scrollPane = JScrollPane(table)
+    fun <E : Any> tableScrollPane(id: String, configurator: TableConfigurator<E>, builder: TableBuilder.() -> Unit) {
+        val tableContainer = TableContainer(id, configurator, builder)
+        val scrollPane = JScrollPane(tableContainer.createTable())
         scrollPane.preferredSize = Dimension(300, scrollPane.preferredSize.height)
-        add(scrollPane, GridBagConstraints())
+        add(scrollPane, DefaultGridBagConstraints())
     }
 
 }
