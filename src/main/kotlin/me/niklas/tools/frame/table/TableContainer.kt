@@ -1,6 +1,10 @@
 package me.niklas.tools.frame.table
 
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
+import javax.swing.AbstractAction
 import javax.swing.JTable
+import javax.swing.KeyStroke
 import javax.swing.table.DefaultTableModel
 
 /**
@@ -10,15 +14,14 @@ import javax.swing.table.DefaultTableModel
 class TableContainer<E : Any>(
     id: String,
     private val configurator: TableConfigurator<E>,
-    builder: TableBuilder.() -> Unit
+    val builder: TableBuilder.() -> Unit
 ) {
 
-    private val tableModel = DefaultTableModel()
-    private val table = JTable(tableModel)
-    private val tableBuilder = TableBuilder(table)
+    private val table = JTable(this.configurator)
+    private val tableBuilder = TableBuilder(configurator, table)
 
     init {
-        tableBuilder.builder()
+        table.tableHeader.reorderingAllowed = false
     }
 
     fun createTable(): JTable {
@@ -28,9 +31,12 @@ class TableContainer<E : Any>(
         val dataRows = this.configurator.findRows
             .map { this.configurator.buildColumn(it) }
             .toTypedArray()
-        this.tableModel.setDataVector(dataRows, this.configurator.getHeaders())
+        this.configurator.setDataVector(dataRows, this.configurator.getHeaders())
 
         changeColumnWidth()
+        setCopyColumnStroke()
+
+        this.tableBuilder.builder()
         return this.table
     }
 
@@ -42,6 +48,25 @@ class TableContainer<E : Any>(
                 val column = this.table.columnModel.getColumn(entry.key)
                 entry.value?.let { column.preferredWidth = it }
             }
+    }
+
+    private fun setCopyColumnStroke() {
+        val copyKeyStroke = KeyStroke.getKeyStroke("ctrl C")
+        this.table.inputMap.put(copyKeyStroke, "copyFirstCell")
+
+        val tableColumn = this.configurator.columns
+            .firstOrNull { it.copyColumn }
+        val copyColumn = tableColumn?.let { this.configurator.indexOfColumn(it) } ?: 0
+
+        this.table.actionMap.put("copyFirstCell", object : AbstractAction() {
+            override fun actionPerformed(e: java.awt.event.ActionEvent?) {
+                if (table.selectedRow != -1) {
+                    val firstCellValue = table.getValueAt(table.selectedRow, copyColumn)?.toString() ?: ""
+                    val stringSelection = StringSelection(firstCellValue)
+                    Toolkit.getDefaultToolkit().systemClipboard.setContents(stringSelection, null)
+                }
+            }
+        })
     }
 
 }

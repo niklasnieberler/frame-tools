@@ -10,7 +10,7 @@ abstract class TableConfigurator<E> : DefaultTableModel() {
 
     val findRows = mutableListOf<E>()
 
-    private val columns = mutableListOf<TableColumn<E>>()
+    val columns = mutableListOf<TableColumn<E>>()
 
     fun rows(list: List<E>) {
         this.findRows.addAll(list)
@@ -24,6 +24,10 @@ abstract class TableConfigurator<E> : DefaultTableModel() {
         this.columns.add(TableColumn(header, block, width))
     }
 
+    fun column(header: String, width: Int? = null, copyColumn: Boolean = false, block: (E) -> Any) {
+        this.columns.add(TableColumn(header, block, width, copyColumn))
+    }
+
     fun getHeaders(): Array<String> {
         return this.columns.map { it.tableHeader }
             .toTypedArray()
@@ -35,9 +39,22 @@ abstract class TableConfigurator<E> : DefaultTableModel() {
             .toMap()
     }
 
+    fun getColumnIndexByHeader(header: String): Int? {
+        val tableColumn = this.columns.firstOrNull { it.tableHeader == header } ?: return null
+        return this.columns.indexOf(tableColumn)
+    }
+
+    fun indexOfColumn(tableColumn: TableColumn<E>): Int {
+        return this.columns.indexOf(tableColumn)
+    }
+
     fun buildColumn(entity: E): Array<out Any> {
         return this.columns
             .map { it.value(entity) }.toTypedArray()
+    }
+
+    override fun isCellEditable(row: Int, column: Int): Boolean {
+        return column == 0
     }
 
 }
