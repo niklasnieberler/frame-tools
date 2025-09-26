@@ -33,7 +33,7 @@ class TableContainer<E : Any>(
         this.configurator.setDataVector(dataRows, this.configurator.getHeaders())
 
         changeColumnWidth()
-        setCopyColumnStroke()
+        TableColumnCopyStroke(this.table, this.configurator).setStrokeIntoTable()
 
         this.tableBuilder.builder()
         return this.table
@@ -47,26 +47,6 @@ class TableContainer<E : Any>(
                 val column = this.table.columnModel.getColumn(entry.key)
                 entry.value?.let { column.preferredWidth = it }
             }
-    }
-
-    // TODO: das hier in ne extra klasse
-    private fun setCopyColumnStroke() {
-        val copyKeyStroke = KeyStroke.getKeyStroke("ctrl C")
-        this.table.inputMap.put(copyKeyStroke, "copyFirstCell")
-
-        val tableColumn = this.configurator.columns
-            .firstOrNull { it.copyColumn }
-        val copyColumn = tableColumn?.let { this.configurator.indexOfColumn(it) } ?: 0
-
-        this.table.actionMap.put("copyFirstCell", object : AbstractAction() {
-            override fun actionPerformed(e: java.awt.event.ActionEvent?) {
-                if (table.selectedRow != -1) {
-                    val firstCellValue = table.getValueAt(table.selectedRow, copyColumn)?.toString() ?: ""
-                    val stringSelection = StringSelection(firstCellValue)
-                    Toolkit.getDefaultToolkit().systemClipboard.setContents(stringSelection, null)
-                }
-            }
-        })
     }
 
 }
