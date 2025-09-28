@@ -1,2 +1,2 @@
 - [ ] alles cool in Kotlin DSL reinpacken
-- [ ] table row sorter nicht mehr mit diesen columns 0, 1, 2 sondern auch mit den Titeln der Table
+- [X] table row sorter nicht mehr mit diesen columns 0, 1, 2 sondern auch mit den Titeln der Table
