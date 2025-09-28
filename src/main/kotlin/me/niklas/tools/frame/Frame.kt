@@ -15,7 +15,7 @@ import javax.swing.JScrollPane
 
 abstract class Frame(
     title: String,
-    dimension: Dimension = Dimension(1540, 778)
+    dimension: Dimension = FrameToolService.getFrameDimension()
 ) : JFrame(
     title
 ) {
@@ -38,6 +38,14 @@ abstract class Frame(
         val scrollPane = JScrollPane(tableContainer.createTable())
         scrollPane.preferredSize = Dimension(300, scrollPane.preferredSize.height)
         add(scrollPane, DefaultGridBagConstraints())
+    }
+
+    fun setVisible() {
+        this.isVisible = true
+    }
+
+    fun updateVisible() {
+        this.isVisible != this.isVisible
     }
 
 }
