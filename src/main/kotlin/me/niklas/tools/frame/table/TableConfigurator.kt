@@ -1,5 +1,7 @@
 package me.niklas.tools.frame.table
 
+import me.niklas.tools.frame.table.sorter.ITableSort
+import javax.swing.SortOrder
 import javax.swing.table.DefaultTableModel
 
 /**
@@ -9,7 +11,6 @@ import javax.swing.table.DefaultTableModel
 abstract class TableConfigurator<E> : DefaultTableModel() {
 
     val findRows = mutableListOf<E>()
-
     val columns = mutableListOf<TableColumn<E>>()
 
     fun rows(list: List<E>) {
@@ -24,8 +25,25 @@ abstract class TableConfigurator<E> : DefaultTableModel() {
         this.columns.add(TableColumn(header, block, width))
     }
 
-    fun column(header: String, width: Int? = null, copyColumn: Boolean = false, block: (E) -> Any) {
-        this.columns.add(TableColumn(header, block, width, copyColumn))
+    fun column(
+        header: String,
+        width: Int? = null,
+        editable: Boolean = false,
+        copyColumn: Boolean = false,
+        sortType: ITableSort? = null,
+        sortOrder: SortOrder? = null,
+        block: (E) -> Any,
+    ) {
+        val tableColumn = TableColumn(
+            header,
+            block,
+            width,
+            editable,
+            copyColumn,
+            sortType,
+            sortOrder
+        )
+        this.columns.add(tableColumn)
     }
 
     fun getHeaders(): Array<String> {
@@ -54,7 +72,7 @@ abstract class TableConfigurator<E> : DefaultTableModel() {
     }
 
     override fun isCellEditable(row: Int, column: Int): Boolean {
-        return column == 0
+        return this.columns[column].editable
     }
 
 }
